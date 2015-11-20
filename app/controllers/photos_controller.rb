@@ -1,4 +1,10 @@
 class PhotosController < ApplicationController
+
+
+  def my_likes
+    @photos = current_user.liked_photos
+  end
+
   def index
     @photos = Photo.all
   end
@@ -25,6 +31,9 @@ class PhotosController < ApplicationController
   end
 
   def edit
+    if current_user != @photo.user
+      redirect_to "/photos", :alert => "I don't think so"
+    end
     @photo = Photo.find(params[:id])
   end
 
