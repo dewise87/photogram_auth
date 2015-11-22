@@ -1,33 +1,102 @@
-<div class="page-header">
-  <h3>Photo #<%= @photo.id %></h3>
-</div>
+<style>
+  /* Only necessary if you are using navbar-fixed-top */
+  body {
+    padding-top: 80px;
+  }
+</style>
 
 <div class="row">
-  <div class="col-md-12">
-    <dl class="dl-horizontal">
-      <dt>Caption</dt>
-      <dd><%= @photo.caption %></dd>
+  <div class="col-md-8 col-md-offset-2">
 
-      <dt>Image</dt>
-      <dd><%= @photo.image %></dd>
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          <%= @photo.user.username %>
+          <small>
+            <%= time_ago_in_words(@photo.updated_at) %> ago
+          </small>
+        </h3>
+      </div>
 
-      <dt>User</dt>
-      <dd><%= @photo.user_id %></dd>
+      <div class="panel-body">
 
-    </dl>
+        <a href="/photos/<%= @photo.id %>">
+          <img src="<%= @photo.image %>" class="img-responsive">
+        </a>
 
-    <div class="btn-group btn-group-justified">
-      <a href="/photos" class="btn btn-primary">
-        Back
-      </a>
-      <% if current_user.id == @photo.user_id%>
-      <a href="/photos/<%= @photo.id %>/edit" class="btn btn-warning">
-        Edit
-      </a><% end %>
-      <% if current_user.id == @photo.user_id%>
-      <a href="/delete_photo/<%= @photo.id %>" class="btn btn-danger" rel="nofollow">
-        Delete
-      </a><% end %>
+        <p>
+          <%= @photo.caption %>
+        </p>
+
+        <form action="/create_like" method="post">
+          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+          <input type="hidden" name="photo_id" value="<%= @photo.id %>">
+
+          <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+          <button class="btn btn-link">
+            <i class="fa fa-heart-o"></i>
+          </button>
+          <small class="text-muted">
+            <% if @photo.fans.pluck(:username).to_sentence == "" %>
+            be the first to like this
+            <% else %>
+            <%= @photo.fans.pluck(:username).to_sentence %>
+            liked this
+            <% end %>
+          </small>
+        </form>
+        <hr>
+
+        <form action="/create_comment" method="post">
+          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+
+          <div class="form-group">
+            <input type="hidden" name="photo_id" value="<%= @photo.id %>">
+          </div>
+
+          <div class="form-group">
+            <input type="hidden" name="user_id" value="<%= current_user.id %>">
+          </div>
+
+          <div class="form-group">
+            <textarea id="text" name="body" placeholder="Add a comment" class="form-control" rows="1"></textarea>
+          </div>
+
+          <button class="btn btn-success">
+            Add comment
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 </div>
+
+<% if current_user.id==@photo.user_id %>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+
+    <div class="btn-group btn-group-justified">
+      <a href="/photos" class="btn btn-primary">
+        <i class="fa fa-chevron-left"></i>
+      </a>
+        <a href="/photos/8/edit" class="btn btn-warning">
+          <i class="fa fa-edit"></i>
+        </a>
+        <a href="/delete_photo/8" class="btn btn-danger" rel="nofollow">
+          <i class="fa fa-trash-o"></i>
+        </a>
+    </div>
+  </div>
+</div>
+<% else %>
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <div class="btn-group btn-group-justified">
+      <a href="/photos" class="btn btn-primary">
+        <i class="fa fa-chevron-left"></i>
+      </a>
+    </div>
+  </div>
+</div>
+<% end %>
