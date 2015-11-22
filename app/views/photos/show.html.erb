@@ -48,28 +48,64 @@
         </form>
         <hr>
 
-        <form action="/create_comment" method="post">
-          <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
-
-          <div class="form-group">
-            <input type="hidden" name="photo_id" value="<%= @photo.id %>">
+        <ul class="media-list">
+          <li class="media">
+            <div class="media-left">
+              <div class="media-body">
+                <h6 class="media-heading"><a href="users/<%= @photo.user_id %>">
+                  <%= @photo.user.username %>
+                </a>
+                <small>
+                  <%= time_ago_in_words((Time.now-@photo.created_at).seconds.ago) %> ago
+                </small>
+              </h6>
+              <%= @photo.caption %>
+            </div>
           </div>
+        </li>
+      </ul>
 
-          <div class="form-group">
-            <input type="hidden" name="user_id" value="<%= current_user.id %>">
+      <% @photo.comments.order("created_at asc").each do |comment| %>
+      <ul class="media-list">
+        <li class="media">
+          <div class="media-left">
+            <div class="media-body">
+              <h6 class="media-heading"><a href="users/<%= comment.user_id %>">
+                <%= comment.user.username %>
+              </a>
+              <small>
+                <%= time_ago_in_words((Time.now-comment.created_at).seconds.ago) %> ago
+              </small>
+            </h6>
+            <%= comment.body %>
           </div>
+        </div>
+      </li>
+    </ul>
+    <% end %>
 
-          <div class="form-group">
-            <textarea id="text" name="body" placeholder="Add a comment" class="form-control" rows="1"></textarea>
-          </div>
+    <form action="/create_comment" method="post">
+      <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
 
-          <button class="btn btn-success">
-            Add comment
-          </button>
-        </form>
+      <div class="form-group">
+        <input type="hidden" name="photo_id" value="<%= @photo.id %>">
       </div>
-    </div>
+
+      <div class="form-group">
+        <input type="hidden" name="user_id" value="<%= current_user.id %>">
+      </div>
+
+      <div class="form-group">
+        <textarea id="text" name="body" placeholder="Add a comment" class="form-control" rows="1"></textarea>
+      </div>
+
+      <button class="btn btn-success">
+        Add comment
+      </button>
+    </form>
   </div>
+</div>
+</div>
 </div>
 
 <% if current_user.id==@photo.user_id %>
@@ -80,12 +116,12 @@
       <a href="/photos" class="btn btn-primary">
         <i class="fa fa-chevron-left"></i>
       </a>
-        <a href="/photos/<%= @photo.id %>/edit" class="btn btn-warning">
-          <i class="fa fa-edit"></i>
-        </a>
-        <a href="/delete_photo/<%= @photo.id %>" class="btn btn-danger" rel="nofollow">
-          <i class="fa fa-trash-o"></i>
-        </a>
+      <a href="/photos/<%= @photo.id %>/edit" class="btn btn-warning">
+        <i class="fa fa-edit"></i>
+      </a>
+      <a href="/delete_photo/<%= @photo.id %>" class="btn btn-danger" rel="nofollow">
+        <i class="fa fa-trash-o"></i>
+      </a>
     </div>
   </div>
 </div>
