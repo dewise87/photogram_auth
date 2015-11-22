@@ -2,9 +2,9 @@ Rails.application.routes.draw do
 
   devise_for :users
 
-  get 'users/index'
+  get "/users", :controller => "users", :action => "index"
 
-  get 'users/show'
+  get "/users/:id", :controller => "users", :action => "show"
 
   # Routes for the Comment resource:
   root "photos#index"
@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   # READ
   get "/likes", :controller => "likes", :action => "index"
   get "/likes/:id", :controller => "likes", :action => "show"
+  get "my_likes", :controller => "likes", :action => "my_likes"
 
   # UPDATE
   get "/likes/:id/edit", :controller => "likes", :action => "edit"
